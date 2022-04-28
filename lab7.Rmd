@@ -1,0 +1,40 @@
+---
+title: "Essentials of Data Analytics"
+author: "19BCE1395-Trishit Chakraborty"
+date: "13/4/2022"
+output:
+  word_document: default
+  html_document: default
+subtitle: Ex-7
+---
+
+#####  Reading the dataset
+
+```{r, echo=TRUE}
+dt<-read.csv('dataset.csv')
+str(dt)
+summary(dt)
+dt$system<-as.factor(dt$system)
+str(dt)
+```
+
+
+#####  The price distribution based on cylinder diameter(bore)
+
+```{r, echo=TRUE}
+pdt<-dt[,c(3,12)]
+plot(pdt, main="Price based on cyl bore")
+km<-kmeans(pdt,3)
+plot(pdt,col=(km$cluster+2))
+km
+```
+
+
+#####  Checking for optimal 'K'
+
+```{r, echo=TRUE}
+dt2<-pdt
+ss<-(nrow(dt2)-1)*sum(apply(dt2,2,var))
+for(i in 2:10) ss[i]<-sum(kmeans(dt2,centers = i)$withinss)
+plot(1:10,ss,type='b',xlab='K',ylab='distortion')
+```

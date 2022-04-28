@@ -1,0 +1,134 @@
+---
+title: "Essentials of Data Analytics"
+author: "19BCE1395-Trishit Chakraborty"
+date: "1/25/2022"
+output:
+  word_document: default
+  html_document: default
+subtitle: Ex-2
+---
+
+Consider 25 observations from in the given dataframe titled ‘data’, store first 5
+observations (6:00-08:00 ) in ‘data1’, next 10 observations(8:30-13:00) in ‘data2’ and
+the last 11 observations (13:00-18:00) in ‘data3’. Perform the following using R
+Programming - 
+
+##### Reading the dataset
+
+```{r, echo=TRUE}
+data = read.csv("data.csv")
+head(data)
+View(data)
+```
+
+
+##### rbind (data1, data2) 
+
+```{r, echo=TRUE}
+data1 = data[1:5, ]
+data1
+data2 = data[6:15, ]
+data2 
+data3 = data[15:25, ]
+data3
+rbind(data1, data2)
+```
+
+##### Store LCZ(TT=0), LCZ(TT=3), LCZ(TT=5), in variables V1, V2 and V3 respectively.
+##### Cbind all these three columns
+
+```{r, echo=TRUE}
+v1 = data$LCZ0
+v2 = data$LCZ3
+v3 = data$LCZ5
+cbind(v1, v2, v3)
+```
+
+#####  Plot Time Vs Pyranometer reading of ‘data’
+
+```{r, echo=TRUE}
+attach(data)
+library(ggplot2)
+p<-ggplot(data=data, aes(x=ï..Time, y=Pyranometer)) +
+  geom_bar(stat="identity")
+p
+```
+
+#####  Plot Pyranometer reading Vs Two 
+
+```{r, echo=TRUE}
+attach(data)
+p1<-ggplot(data=data, aes(x=Two_0, y=Pyranometer)) +
+  geom_bar(stat="identity")
+p1
+
+p2<-ggplot(data=data, aes(x=Two_3, y=Pyranometer)) +
+  geom_bar(stat="identity")
+p2
+
+p3<-ggplot(data=data, aes(x=Two_5, y=Pyranometer)) +
+  geom_bar(stat="identity")
+p3
+```
+
+##### Plot Pyranometer reading Vs Qact
+
+```{r, echo=TRUE}
+p1<-ggplot(data=data, aes(x=Quact_0, y=Pyranometer)) +
+  geom_bar(stat="identity")
+p1
+
+p2<-ggplot(data=data, aes(x=Quact_3, y=Pyranometer)) +
+  geom_bar(stat="identity")
+p2
+
+p3<-ggplot(data=data, aes(x=Quact_5, y=Pyranometer)) +
+  geom_bar(stat="identity")
+p3
+```
+
+#####  Pyranometer reading Vs degree of temperature rise
+
+```{r, echo=TRUE}
+p1<-ggplot(data=data, aes(x=TempRise_0, y=Pyranometer)) +
+  geom_bar(stat="identity")
+p1
+
+p2<-ggplot(data=data, aes(x=TempRise_3, y=Pyranometer)) +
+  geom_bar(stat="identity")
+p2
+
+p3<-ggplot(data=data, aes(x=TempRise_5, y=Pyranometer)) +
+  geom_bar(stat="identity")
+p3
+```
+
+##### Determine the best linear fit equation between Pyranometer reading and Quact
+
+```{r, echo=TRUE}
+model = lm(Pyranometer ~ Quact_0, data = data)
+model
+
+# Best Linear Fit Equation is y = 6.102x + 313.034
+```
+
+##### Plot the best linear fit
+
+```{r, echo=TRUE}
+plot(Quact_0, Pyranometer, col = "blue", pch = 20)
+y_preds <- predict(model)
+abline(model)
+```
+
+##### Determine the Residual Sum of Squares (RSS)
+
+```{r, echo=TRUE}
+sum(resid(model)^2)
+```
+
+##### Plot the residuals
+
+```{r, echo=TRUE}
+plot(model, 1)
+plot(model, 5)
+```

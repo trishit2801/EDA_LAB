@@ -1,0 +1,60 @@
+---
+title: "Essentials of Data Analytics"
+author: "19BCE1395-Trishit Chakraborty"
+date: "1/25/2022"
+output:
+  word_document: default
+  html_document: default
+subtitle: Ex-1
+---
+
+##### Reading the dataset
+
+```{r, echo=TRUE}
+data = read.csv("CreditWorthiness.csv")
+head(data)
+View(data)
+```
+
+
+##### Installing required packages
+
+```{r, echo=TRUE}
+library(dplyr)
+library(ggplot2)
+```
+
+
+##### Plotting Age vs Current Duration
+
+```{r, echo=TRUE}
+attach(data)
+ggplot(data,aes(x=NumCred,y=age))+geom_point()
+```
+
+
+##### Finding the correlation value
+
+```{r, echo=TRUE}
+cor(NumCred, age)
+```
+
+
+##### Simple Linear Regression
+
+```{r, echo=TRUE}
+model = lm(age~NumCred, data)
+summary(model)
+plot(model$resid) # Residual plot
+qqnorm(model$resid) #Q-Q Plot
+```
+
+
+##### Multiple linear regression
+
+```{r, echo=TRUE}
+model2 = lm(age ~ NumCred + Cdur, data)
+summary(model2)
+plot(model2$resid) # Residual plot
+qqnorm(model2$resid) #Q-Q Plot
+```

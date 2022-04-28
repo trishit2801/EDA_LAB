@@ -1,0 +1,119 @@
+---
+title: "Essentials of Data Analytics"
+author: "19BCE1395-Trishit Chakraborty"
+date: "2/3/2022"
+output:
+  word_document: default
+  html_document: default
+subtitle: Ex-3
+---
+
+##### Reading the dataset
+
+```{r, echo=TRUE}
+data = read.csv("dataset.csv")
+head(data)
+View(data)
+```
+
+
+##### (i)Determine grand mean and mean of thermal conductivity
+
+```{r, echo=TRUE}
+attach(data)
+mean(K_Analytical)
+mean(K_Experimental)
+mean(unique(K_Analytical))    # grand mean
+mean(unique(K_Experimental))  # grand mean
+```
+
+
+##### (ii)Sum of Squares between and Sum of Squares within
+
+```{r, echo=TRUE}
+library(dplyr)
+data <- data %>%
+  rename(Vol = ï..Vol)
+cor(data$Vol, data$K_Analytical)
+model = lm(data$K_Analytical ~ data$Vol, data = data)
+summary(model)
+
+#finding Sum of Squares between
+sumsquares_between <- sum((fitted(model) - mean(data$K_Analytical))^2)
+sumsquares_between
+
+#finding Sum of Squares within
+sumsquares_within <- sum((fitted(model) - data$K_Analytical)^2)
+sumsquares_within
+```
+
+
+##### (iii)Degrees of Freedom (Between, Within, Total)
+
+```{r, echo=TRUE}
+num_columns = 5
+num_observations = 40
+df_between = num_columns - 1
+df_between
+df_within = num_observations - num_columns
+df_within
+df_total = df_between + df_within
+df_total
+```
+
+
+##### (iv)Mean Squares (Between and Within)
+
+```{r, echo=TRUE}
+meansquares_between = sumsquares_between/df_between
+meansquares_between
+meansquares_within = sumsquares_within/df_within
+meansquares_within
+```
+
+
+##### (v)F_Statistic and F_Critical
+
+```{r, echo=TRUE}
+F_statistic = meansquares_between/meansquares_within
+F_statistic
+F_Critical = qf(p=0.05, df1=4, df2=35, lower.tail=FALSE)
+F_Critical
+```
+
+
+##### (vi)Check, Is Null Hypothesize accepted?
+
+```{r, echo=TRUE}
+# Since F_statistic value > F_Critical value, therefore Null Hypothesis is not accepted
+```
+
+
+##### (vii)Plot Vol Conc Vs Thermal Conductivity
+
+```{r, echo=TRUE}
+library(ggplot2)
+ggplot(data, aes(x=data$Vol, y=data$K_Analytical)) + geom_point()
+ggplot(data, aes(x=data$Vol, y=data$K_Experimental)) + geom_point()
+```
+
+
+##### (viii)Plot Vol Conc vs % Increase in Thermal Conductivity (In Bar Chart)
+
+```{r, echo=TRUE}
+p1<-ggplot(data=data, aes(x=data$Vol, y=data$Increase_K_Analytical)) +
+  geom_bar(stat="identity")
+p1
+
+p2<-ggplot(data=data, aes(x=data$Vol, y=data$Increase_K_Experimental)) +
+  geom_bar(stat="identity")
+p2
+```
+
+
+##### (ix)Error(Measured Value - Analytical Value)
+
+```{r, echo=TRUE}
+error = data$K_Experimental - data$K_Analytical
+error
+```

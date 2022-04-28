@@ -1,0 +1,97 @@
+---
+title: "Essentials of Data Analytics"
+author: "19BCE1395-Trishit Chakraborty"
+date: "2/21/2022"
+output:
+  word_document: default
+  html_document: default
+subtitle: Ex-4
+---
+
+Store Airpassengers dataset (inbuilt dataset available in ‘R’) in a dataframe named “data”, install packages such as ‘forecast’, ‘tseries’. Perform the following - 
+
+#####  (i) Display entire dataset
+
+```{r, echo=TRUE}
+data("AirPassengers")
+data = AirPassengers
+data
+library(forecast)
+library(tseries)
+```
+
+
+##### (ii) Check for unfilled data 
+
+```{r, echo=TRUE}
+sum(is.na(data))
+# No unfilled data is present in the dataset
+```
+
+
+##### (ii) Display the statistical info of the dataset such as min, max, 1st quartile, 3rd quartile, mean and median.
+
+```{r, echo=TRUE}
+summary(data)
+```
+
+
+##### (iii) Plot ‘data’ (No. of Air passengers Vs Year) 
+
+```{r, echo=TRUE}
+plot(data, xlab="Year", ylab = "No. of Air Passengers")
+```
+
+
+##### (iv) Plot as timeseries ‘data’ (monthwise) 
+
+```{r, echo=TRUE}
+boxplot(data~cycle(data),xlab="Months", ylab = "No. of Air Passengers")
+```
+
+
+##### (v) Decompose the data as multiplicative and store as ‘ddata’
+
+```{r, echo=TRUE}
+ddata <- decompose(data, "multiplicative")
+```
+
+
+##### (vi) Plot ‘ddata’
+
+```{r, echo=TRUE}
+autoplot(ddata)
+```
+
+
+##### (vii) Plot the following: trend, seasonal and random separately. 
+
+```{r, echo=TRUE}
+plot(ddata$seasonal)
+plot(ddata$trend)
+plot(ddata$random)
+```
+
+
+##### (viii) Perform ADF test for stationarity 
+
+```{r, echo=TRUE}
+adf.test(data) 
+```
+
+
+##### (ix) Plot ACF and PACF 
+
+```{r, echo=TRUE}
+MA2 <- arima.sim(n = 100, list(ma = c(0.9, 0.6)), sd = 1)
+acf(MA2)
+pacf(MA2)
+```
+
+
+##### (x) Model using ARIMA 
+
+```{r, echo=TRUE}
+arima <- auto.arima(data)
+arima
+```

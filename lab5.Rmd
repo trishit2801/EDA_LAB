@@ -1,0 +1,145 @@
+---
+title: "Essentials of Data Analytics"
+author: "19BCE1395-Trishit Chakraborty"
+date: "3/1/2022"
+output:
+  word_document: default
+  html_document: default
+subtitle: Ex-5
+---
+
+#####  Loading the packages
+
+```{r, echo=TRUE}
+library(caTools)
+library(ROCR)
+library(dplyr)
+```
+
+
+#####  Reading the dataset
+
+```{r, echo=TRUE}
+data = read.csv("haberman.csv")
+```
+
+
+##### Renaming the columns
+```{r, echo=TRUE}
+data <- data %>%
+  rename(x1 = X30)
+data <- data %>%
+  rename(x2 = X64)
+data <- data %>%
+  rename(x3 = X1)
+data <- data %>%
+  rename(y = X1.1)
+```
+
+
+#####  Displaying the dataset
+
+```{r, echo=TRUE}
+head(data)
+View(data)
+```
+
+
+#####  Checking for missing values
+
+```{r, echo=TRUE}
+sum(is.na(data))
+```
+
+##### Encoding the class
+
+```{r, echo=TRUE}
+data$y[data$y == 1] = 0
+data$y[data$y == 2] = 1
+```
+
+
+#####  Splitting dataset
+
+```{r, echo=TRUE}
+split = sample.split(data, SplitRatio = 0.8)
+split
+   
+train = subset(data, split == "TRUE")
+test = subset(data, split == "FALSE")
+dim(train)
+dim(test)
+```
+
+
+#####  Training the model
+
+```{r, echo=TRUE}
+# attach(data)
+logistic_model <- glm(train$y ~ train$x1 + train$x2 + train$x3, 
+                      family = binomial(link='logit'), 
+                      data = train)
+logistic_model
+```
+
+
+#####  Model Summary
+
+```{r, echo=TRUE}
+summary(logistic_model)
+```
+
+
+#####  Predicting the test data
+
+```{r, echo=TRUE}
+prediction <- predict(logistic_model, 
+                       test, type = "response")
+prediction  
+```
+
+
+#####  Finding the classes corresponding to the probabilites
+
+```{r, echo=TRUE}
+prediction <- ifelse(prediction > 0.5, 1, 0)
+prediction
+```
+
+
+#####  Evaluating model accuracy using confusion matrix
+
+```{r, echo=TRUE}
+# length(prediction)
+table(train$y, prediction)
+   
+error <- mean(prediction != train$y)
+print(paste('Accuracy =', 1 - error))
+```
+
+
+#####  ROC-AUC Curve (Not needed)
+
+```{r, echo=TRUE}
+ROCPred <- prediction(prediction, train$y) 
+ROCPer <- performance(ROCPred, measure = "tpr", 
+                             x.measure = "fpr")
+   
+auc <- performance(ROCPred, measure = "auc")
+auc <- auc@y.values[[1]]
+auc
+```
+
+
+#####  Plotting the curve (Not needed)
+
+```{r, echo=TRUE}
+plot(ROCPer)
+plot(ROCPer, colorize = TRUE, 
+     print.cutoffs.at = seq(0.1, by = 0.1), 
+     main = "ROC CURVE")
+abline(a = 0, b = 1)
+   
+auc <- round(auc, 4)
+legend(.6, .4, auc, title = "AUC", cex = 1)
+```
